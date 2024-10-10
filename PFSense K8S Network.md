@@ -46,8 +46,7 @@ As for the USB3 Ethernet interface... Well, the server only has two network inte
 I want my Kubernetes cluster to consist of both VMs and physical nodes. Furthermore I want the physical nodes to be placed in a nearby shed. Thus, I need to have WI-FI connection to the nodes. But I do NOT want the Kubernetes system to have to deal with WI-FI connection. Kubernetes networking is complex enough as it is. Thus, by using two WI-FI Routers, I could isolate Kubernetes from WI-FI. 
 
 How was this set up
-================================================================
-
+--------------------------------
 First, we need to create the brigde1 device so we can forward it into the PFSense VM 
 
 So, we need to find it's device name
@@ -136,9 +135,11 @@ This creates a bridge interface, and connects the host to the bridge
 You can then add this network to any VM on the host like this:
 ![](pfsense/Virt_bridged_network.png)
 
-PFSense setup
+PFSense configuration
 ================================================================
 
+Network Interface
+----------------------------------------------------------------
 In PFSense, you can then assign this interface
 ![](pfsense/pfsense_interface_assignment.png)
 
@@ -151,6 +152,7 @@ Now that we have the interface, we must define it's properties
 We give it the ip address `192.168.4.1/24`, which makes it the gateway for the server machine (see above)
 
 TODO
-[] DNS Forwarder
-[] DHCP
-[] Routing rules
+------------- 
+* [ ] DNS Forwarder
+* [ ] DHCP
+* [ ] Routing rules
