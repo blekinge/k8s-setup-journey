@@ -9,7 +9,7 @@ My network
 ----------------
 Well, my network setup is ... let's say... janky
 
-![](/Janky Network.svg)
+![](/pfsense/Janky%20Network.svg)
 
 The PFSense VM is running DHCP and DNS forwarding. 
 
@@ -134,19 +134,19 @@ EOS
 This creates a bridge interface, and connects the host to the bridge
 
 You can then add this network to any VM on the host like this:
-![](Virt_bridged_network.png)
+![](pfsense/Virt_bridged_network.png)
 
 PFSense setup
 ================================================================
 
 In PFSense, you can then assign this interface
-![](pfsense_interface_assignment.png)
+![](pfsense/pfsense_interface_assignment.png)
 
 Note that in the VM, the devices will all be named vtnetX, probably in the order they are listed in the libvirt configuration. The best way to ensure that the correct device is assigned is to compare MAC addresses.
 
 Now that we have the interface, we must define it's properties
 
-![pfsense_interface_k8s.png](pfsense_interface_k8s.png)
+![pfsense_interface_k8s.png](pfsense/pfsense_interface_k8s.png)
 
 We give it the ip address `192.168.4.1/24`, which makes it the gateway for the server machine (see above)
 
