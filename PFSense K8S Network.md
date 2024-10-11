@@ -151,8 +151,27 @@ Now that we have the interface, we must define it's properties
 
 We give it the ip address `192.168.4.1/24`, which makes it the gateway for the server machine (see above)
 
-TODO
-------------- 
-* [ ] DNS Forwarder
-* [ ] DHCP
-* [ ] Routing rules
+Firewall rules
+--------------------------------
+
+Now it is time to consider the firewall. We want the K8S machines to be able to access the internet (duh), but not my LAN or DMZ zones. Furthermore, we need access to the firewall machine itself, as it will act as gateway and DNS server, among other things.
+
+These rules should accomplish that:
+![pfsense_k8s_firewall_rules.png](pfsense/pfsense_k8s_firewall_rules.png)
+
+DNS
+----------------------------------
+
+We had already configured PFSense to be a DNS Forwarder. A DNS Forwarder handles the DNS queries it can, and forwards the rest upstream, i.e. to the WAN DNS servers.
+
+So, for now the only setup we need is to configure PFSense to also be a DNS Forwarder on the K8S interface.
+![pfsense_k8s_dns_forwarder.png](pfsense/pfsense_k8s_dns_forwarder.png)
+
+We can then configure `Host Overrides` for the machines on the K8S network
+
+![pfsense_k8s_dns_host_overrides.png](pfsense/pfsense_k8s_dns_host_overrides.png)
+
+And this should be everything needed for now.
+
+We will return to pfsense later, when we need to setup MetalLB and BGP as to be able to expose K8s Services on the network.
+
