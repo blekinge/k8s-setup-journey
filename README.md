@@ -5,8 +5,8 @@ A Guide to how I set up my Kubernetes cluster. This guide was made to serve as b
 
 Episodes
 ---------------
-* [ ] [PFSense network setup](/PFSense%20K8S%20Network.md) **WIP**
-* [ ] VM setup
+* [X] [PFSense network setup](/PFSense%20K8S%20Network.md) 
+* [ ] [VM setup](VMs.md) **WIP**
 * [ ] Machine setups
 * [ ] K3s
 * [ ] MetalLB and PFSense
