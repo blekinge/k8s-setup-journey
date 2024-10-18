@@ -7,9 +7,9 @@ Episodes
 ---------------
 * [X] [PFSense network setup](/PFSense%20K8S%20Network.md) 
 * [X] [VM setup](VMs.md)
-* [ ] Machine setups
-* [ ] K3s
-* [ ] MetalLB and PFSense
+* [?] Machine setups
+* [ ] [K3s](K3s.md) **WIP**
+* [ ] MetalLB and PFSense **WIP**
 * [ ] DNS resolution for PFSense
 * [ ] Longhorn (storage)
 
