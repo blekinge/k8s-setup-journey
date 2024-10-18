@@ -84,13 +84,28 @@ So I need a user account with administrator permissions
 
 #### Software selection
 
-The standard should be sufficient. The only thing you really want to be sure of is `openssh-server`. Anything else can be installed afterwards. (Yes, we can still use the LibVirt console access to login and install `openssh-server`, but that is a fallback)
+The standard should be sufficient. The only thing you really want to be sure of is `openssh-server`. Anything else can be installed afterward. (Yes, we can still use the LibVirt console access to login and install `openssh-server`, but that is a fallback)
 
-I do not quite know what the 
+I do not quite know what the Guest agents do, but as this IS a VM running under a hypervisor, I guess they are appropriate.
 ![16.Install.Software.png](VM/16.Install.Software.png)
 
+
+#### Installation
+
+Then we can start the installation
+![17.Installation.Begin.png](VM/17.Installation.Begin.png)
+
+Pretty soon this will be finished.
+![17.Installation.Complete.png](VM/17.Installation.Complete.png)
+
+#### Login
+
+Then all we need to do is access the machine, setup ssh-keys and `dnf update`
+![20.Login.png](VM/20.Login.png)
+
+
 ```bash
-ping 192.168.4.6
+ping -c 5 192.168.4.6
 
 ssh 192.168.4.6
 
@@ -98,6 +113,11 @@ ssh-copy-id 192.168.4.6
 
 ssh 192.168.4.6
 
-
 sudo dnf update
 ```
+
+#### DNS
+
+Just like in the previous section, we must now add the VMs IP to the DNS entries in PFSense
+
+![30.DNS.png](VM/30.DNS.png)
