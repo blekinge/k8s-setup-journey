@@ -116,3 +116,329 @@ Now we must create a neighbour object for each kubernetes node. In our case, thi
 
 Each of these must be configured with the preselected MetalLB ASN (`64500`) and not much else.
 
+
+## Applying the settings
+First, we create a Loadbalancer service, to in order to be able to test
+```
+[aabl@k8smaster1 ~]$ kubectl expose deployment test --type LoadBalancer
+service/test exposed
+[aabl@k8smaster1 ~]$ kubectl get service
+NAME         TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+kubernetes   ClusterIP      10.43.0.1       <none>        443/TCP        7d18h
+test         LoadBalancer   10.43.129.111   <pending>     80:32449/TCP   5s
+[aabl@k8smaster1 ~]$ 
+```
+As we can see, the external IP is stuck as pending, as MetalLB is not configured and can thus not give us an IP.
+
+So we configure it with the config from above:
+```
+[aabl@k8smaster1 ~]$ kubectl apply -f ipaddresspool.yaml 
+ipaddresspool.metallb.io/metallb-pool created
+[aabl@k8smaster1 ~]$ kubectl apply -f BGPAdvertisement.yaml 
+bgpadvertisement.metallb.io/metallb-advertisment created
+[aabl@k8smaster1 ~]$ kubectl apply -f bgppeer.yaml 
+bgppeer.metallb.io/metallb-bgppeer-pfsense created
+[aabl@k8smaster1 ~]$
+```
+
+Now MetalLB kicks into action and assigns an IP (from our `ipaddresspool`) to the service
+```
+[aabl@k8smaster1 ~]$ kubectl get service
+NAME         TYPE           CLUSTER-IP      EXTERNAL-IP    PORT(S)        AGE
+kubernetes   ClusterIP      10.43.0.1       <none>         443/TCP        7d19h
+test         LoadBalancer   10.43.129.111   192.168.32.1   80:32449/TCP   45m
+[aabl@k8smaster1 ~]$ 
+```
+
+And this IP is globally routed by PFSense, as I can reach it from my workstation (ref my [Janky Network](PFSense%20K8S%20Network.md))
+```
+aabl@fedora:~$ curl 192.168.32.1
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+html { color-scheme: light dark; }
+body { width: 35em; margin: 0 auto;
+font-family: Tahoma, Verdana, Arial, sans-serif; }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+aabl@fedora:~$ 
+```
+
+We can see the status on PFSense 
+![pfsense.frr.status.png](MetalLB/pfsense.frr.status.png)
+
+Zebra Routes
+```
+Codes: K - kernel route, C - connected, S - static, R - RIP,
+       O - OSPF, I - IS-IS, B - BGP, E - EIGRP, T - Table,
+       v - VNC, V - VNC-Direct, A - Babel, f - OpenFabric,
+       > - selected route, * - FIB route, q - queued, r - rejected, b - backup
+       t - trapped, o - offload failure
+
+K>* 0.0.0.0/0 [0/0] via 87.49.255.193, vtnet2, 5d17h46m
+C>* 87.49.255.192/26 [0/1] is directly connected, vtnet2, 5d17h46m
+C>* 192.168.2.0/24 [0/1] is directly connected, vtnet0, 5d17h46m
+C>* 192.168.3.0/24 [0/1] is directly connected, vtnet3, 5d17h46m
+C>* 192.168.4.0/24 [0/1] is directly connected, vtnet1, 5d17h46m
+B>* 192.168.32.0/32 [20/0] via 192.168.4.4, vtnet1, weight 1, 00:03:23
+  *                        via 192.168.4.10, vtnet1, weight 1, 00:03:23
+  *                        via 192.168.4.20, vtnet1, weight 1, 00:03:23
+B>* 192.168.32.1/32 [20/0] via 192.168.4.4, vtnet1, weight 1, 00:03:23
+  *                        via 192.168.4.10, vtnet1, weight 1, 00:03:23
+  *                        via 192.168.4.20, vtnet1, weight 1, 00:03:23
+```
+
+BGP Routes
+```
+BGP table version is 2, local router ID is 192.168.4.1, vrf id 0
+Default local pref 100, local AS 64501
+Status codes:  s suppressed, d damped, h history, * valid, > best, = multipath,
+               i internal, r RIB-failure, S Stale, R Removed
+Nexthop codes: @NNN nexthop's vrf id, < announce-nh-self
+Origin codes:  i - IGP, e - EGP, ? - incomplete
+RPKI validation codes: V valid, I invalid, N Not found
+
+    Network          Next Hop            Metric LocPrf Weight Path
+ *= 192.168.32.0/32  192.168.4.20                           0 64500 i
+ *=                  192.168.4.10                           0 64500 i
+ *>                  192.168.4.4                            0 64500 i
+ *= 192.168.32.1/32  192.168.4.20                           0 64500 i
+ *=                  192.168.4.10                           0 64500 i
+ *>                  192.168.4.4                            0 64500 i
+
+Displayed  2 routes and 6 total paths
+```
+
+BGP Summary
+```
+IPv4 Unicast Summary (VRF default):
+BGP router identifier 192.168.4.1, local AS number 64501 vrf-id 0
+BGP table version 2
+RIB entries 3, using 576 bytes of memory
+Peers 3, using 40 KiB of memory
+
+Neighbor        V         AS   MsgRcvd   MsgSent   TblVer  InQ OutQ  Up/Down State/PfxRcd   PfxSnt Desc
+192.168.4.4     4      64500        10         8        2    0    0 00:03:24            2        0 k8smaster1.k8s.askov
+192.168.4.10    4      64500        10         8        2    0    0 00:03:24            2        0 k8snode1.k8s.askov.n
+192.168.4.20    4      64500        10         8        2    0    0 00:03:24            2        0 k8snode2.k8s.askov.n
+
+Total number of neighbors 3
+```
+
+BGP Neighbors
+```
+BGP neighbor is 192.168.4.4, remote AS 64500, local AS 64501, external link
+  Local Role: undefined
+  Remote Role: undefined
+ Description: k8smaster1.k8s.askov.net
+  BGP version 4, remote router ID 192.168.4.4, local router ID 192.168.4.1
+  BGP state = Established, up for 00:03:24
+  Last read 00:00:24, Last write 00:00:24
+  Hold time is 90 seconds, keepalive interval is 30 seconds
+  Configured hold time is 180 seconds, keepalive interval is 60 seconds
+  Configured conditional advertisements interval is 60 seconds
+  Neighbor capabilities:
+    4 Byte AS: advertised and received
+    Extended Message: advertised
+    AddPath:
+      IPv4 Unicast: RX advertised
+    Long-lived Graceful Restart: advertised
+    Route refresh: advertised
+    Enhanced Route Refresh: advertised
+    Address Family IPv4 Unicast: advertised and received
+    Address Family IPv6 Unicast: received
+    Hostname Capability: advertised (name: pfSense.askov.net,domain name: n/a) not received
+    Version Capability: not advertised not received
+    Graceful Restart Capability: advertised
+  Graceful restart information:
+    Local GR Mode: Helper*
+
+    Remote GR Mode: Disable
+
+    R bit: False
+    N bit: False
+    Timers:
+      Configured Restart Time(sec): 120
+      Received Restart Time(sec): 0
+  Message statistics:
+    Inq depth is 0
+    Outq depth is 0
+                         Sent       Rcvd
+    Opens:                  1          1
+    Notifications:          0          0
+    Updates:                0          2
+    Keepalives:             7          7
+    Route Refresh:          0          0
+    Capability:             0          0
+    Total:                  8         10
+  Minimum time between advertisement runs is 0 seconds
+
+ For address family: IPv4 Unicast
+  Update group 1, subgroup 1
+  Packet Queue length 0
+  Community attribute sent to this neighbor(large)
+  2 accepted prefixes
+
+  Connections established 1; dropped 0
+  Last reset 5d17h33m,   No AFI/SAFI activated for peer (n/a)
+  External BGP neighbor may be up to 1 hops away.
+Local host: 192.168.4.1, Local port: 179
+Foreign host: 192.168.4.4, Foreign port: 58237
+Nexthop: 192.168.4.1
+Nexthop global: fe80::5054:ff:fe95:6dcb
+Nexthop local: fe80::5054:ff:fe95:6dcb
+BGP connection: shared network
+BGP Connect Retry Timer in Seconds: 120
+Estimated round trip time: 5 ms
+Read thread: on  Write thread: on  FD used: 25
+
+BGP neighbor is 192.168.4.10, remote AS 64500, local AS 64501, external link
+  Local Role: undefined
+  Remote Role: undefined
+ Description: k8snode1.k8s.askov.net
+  BGP version 4, remote router ID 192.168.4.10, local router ID 192.168.4.1
+  BGP state = Established, up for 00:03:24
+  Last read 00:00:24, Last write 00:00:24
+  Hold time is 90 seconds, keepalive interval is 30 seconds
+  Configured hold time is 180 seconds, keepalive interval is 60 seconds
+  Configured conditional advertisements interval is 60 seconds
+  Neighbor capabilities:
+    4 Byte AS: advertised and received
+    Extended Message: advertised
+    AddPath:
+      IPv4 Unicast: RX advertised
+    Long-lived Graceful Restart: advertised
+    Route refresh: advertised
+    Enhanced Route Refresh: advertised
+    Address Family IPv4 Unicast: advertised and received
+    Address Family IPv6 Unicast: received
+    Hostname Capability: advertised (name: pfSense.askov.net,domain name: n/a) not received
+    Version Capability: not advertised not received
+    Graceful Restart Capability: advertised
+  Graceful restart information:
+    Local GR Mode: Helper*
+
+    Remote GR Mode: Disable
+
+    R bit: False
+    N bit: False
+    Timers:
+      Configured Restart Time(sec): 120
+      Received Restart Time(sec): 0
+  Message statistics:
+    Inq depth is 0
+    Outq depth is 0
+                         Sent       Rcvd
+    Opens:                  1          1
+    Notifications:          0          0
+    Updates:                0          2
+    Keepalives:             7          7
+    Route Refresh:          0          0
+    Capability:             0          0
+    Total:                  8         10
+  Minimum time between advertisement runs is 0 seconds
+
+ For address family: IPv4 Unicast
+  Update group 1, subgroup 1
+  Packet Queue length 0
+  Community attribute sent to this neighbor(large)
+  2 accepted prefixes
+
+  Connections established 1; dropped 0
+  Last reset 5d17h30m,   No AFI/SAFI activated for peer (n/a)
+  External BGP neighbor may be up to 1 hops away.
+Local host: 192.168.4.1, Local port: 179
+Foreign host: 192.168.4.10, Foreign port: 40859
+Nexthop: 192.168.4.1
+Nexthop global: fe80::5054:ff:fe95:6dcb
+Nexthop local: fe80::5054:ff:fe95:6dcb
+BGP connection: shared network
+BGP Connect Retry Timer in Seconds: 120
+Estimated round trip time: 8 ms
+Read thread: on  Write thread: on  FD used: 26
+
+BGP neighbor is 192.168.4.20, remote AS 64500, local AS 64501, external link
+  Local Role: undefined
+  Remote Role: undefined
+ Description: k8snode2.k8s.askov.net
+  BGP version 4, remote router ID 192.168.4.20, local router ID 192.168.4.1
+  BGP state = Established, up for 00:03:24
+  Last read 00:00:24, Last write 00:00:24
+  Hold time is 90 seconds, keepalive interval is 30 seconds
+  Configured hold time is 180 seconds, keepalive interval is 60 seconds
+  Configured conditional advertisements interval is 60 seconds
+  Neighbor capabilities:
+    4 Byte AS: advertised and received
+    Extended Message: advertised
+    AddPath:
+      IPv4 Unicast: RX advertised
+    Long-lived Graceful Restart: advertised
+    Route refresh: advertised
+    Enhanced Route Refresh: advertised
+    Address Family IPv4 Unicast: advertised and received
+    Address Family IPv6 Unicast: received
+    Hostname Capability: advertised (name: pfSense.askov.net,domain name: n/a) not received
+    Version Capability: not advertised not received
+    Graceful Restart Capability: advertised
+  Graceful restart information:
+    Local GR Mode: Helper*
+
+    Remote GR Mode: Disable
+
+    R bit: False
+    N bit: False
+    Timers:
+      Configured Restart Time(sec): 120
+      Received Restart Time(sec): 0
+  Message statistics:
+    Inq depth is 0
+    Outq depth is 0
+                         Sent       Rcvd
+    Opens:                  1          1
+    Notifications:          0          0
+    Updates:                0          2
+    Keepalives:             7          7
+    Route Refresh:          0          0
+    Capability:             0          0
+    Total:                  8         10
+  Minimum time between advertisement runs is 0 seconds
+
+ For address family: IPv4 Unicast
+  Update group 1, subgroup 1
+  Packet Queue length 0
+  Community attribute sent to this neighbor(large)
+  2 accepted prefixes
+
+  Connections established 1; dropped 0
+  Last reset 5d17h29m,   No AFI/SAFI activated for peer (n/a)
+  External BGP neighbor may be up to 1 hops away.
+Local host: 192.168.4.1, Local port: 179
+Foreign host: 192.168.4.20, Foreign port: 45877
+Nexthop: 192.168.4.1
+Nexthop global: fe80::5054:ff:fe95:6dcb
+Nexthop local: fe80::5054:ff:fe95:6dcb
+BGP connection: shared network
+BGP Connect Retry Timer in Seconds: 120
+Estimated round trip time: 8 ms
+Read thread: on  Write thread: on  FD used: 27
+```
+
+So this works.
+
+Now the next step is to get DNS working. I want to be able to access this service as `test.default.svc.cluster.local` or some other dns name, rather than be stuck with a (potentially unstable IP)
+

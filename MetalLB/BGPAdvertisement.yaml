@@ -5,8 +5,7 @@ metadata:
   namespace: metallb-system
 spec:
   ipAddressPools:
-    - metallb-pool
-  aggregationLength: 32
-  localPref: 100
+    - metallb-pool # Reference to the IP Address Pool above
+  localPref: 100 # Weight of the routes we advertise
   communities:
-    - 65535:65282
+    - 65535:65282 # no-advertise community
