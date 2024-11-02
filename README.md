@@ -9,7 +9,7 @@ Episodes
 * [X] [VM setup](VMs.md)
 * [ ] Machine setups
 * [X] [K3s](K3s.md) 
-* [ ] MetalLB and PFSense **WIP**
+* [X] MetalLB and PFSense
 * [ ] DNS resolution for PFSense
 * [ ] Longhorn (storage)
 
