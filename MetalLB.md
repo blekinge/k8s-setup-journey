@@ -442,3 +442,55 @@ So this works.
 
 Now the next step is to get DNS working. I want to be able to access this service as `test.default.svc.cluster.local` or some other dns name, rather than be stuck with a (potentially unstable IP)
 
+
+## Fixed IPs
+
+We can set a fixed IP for at service by adding an annotation `metallb.universe.tf/loadBalancerIPs: 192.168.1.100`
+
+There is a lot of ways to add this annotation, but the easiest is
+
+```
+aabl@fedora:~$ kubectl annotate services test 'metallb.universe.tf/loadBalancerIPs=192.168.32.2'
+service/test annotate
+aabl@fedora:~$ kubectl describe service test 
+Name:                     test
+Namespace:                default
+Labels:                   app=test
+Annotations:              metallb.universe.tf/ip-allocated-from-pool: metallb-pool
+                          metallb.universe.tf/loadBalancerIPs: 192.168.32.2
+Selector:                 app=test
+Type:                     LoadBalancer
+IP Family Policy:         SingleStack
+IP Families:              IPv4
+IP:                       10.43.129.111
+IPs:                      10.43.129.111
+LoadBalancer Ingress:     192.168.32.2
+Port:                     <unset>  80/TCP
+TargetPort:               80/TCP
+NodePort:                 <unset>  32449/TCP
+Endpoints:                10.42.0.15:80,10.42.2.6:80,10.42.3.4:80
+Session Affinity:         None
+External Traffic Policy:  Cluster
+Events:
+  Type     Reason            Age                  From                Message
+  ----     ------            ----                 ----                -------
+  Normal   nodeAssigned      7d1h (x2 over 7d2h)  metallb-speaker     announcing from node "k8smaster1.k8s.askov.net" with protocol "bgp"
+  Normal   nodeAssigned      7d1h (x2 over 7d2h)  metallb-speaker     announcing from node "k8snode1.k8s.askov.net" with protocol "bgp"
+  Normal   nodeAssigned      7d1h (x2 over 7d2h)  metallb-speaker     announcing from node "k8snode2.k8s.askov.net" with protocol "bgp"
+  Warning  AllocationFailed  75s (x3 over 75s)    metallb-controller  Failed to allocate IP for "default/test": ["192.168.3.2"] is not allowed in config
+  Normal   nodeAssigned      3s (x12 over 17m)    metallb-speaker     announcing from node "k8smaster1.k8s.askov.net" with protocol "bgp"
+  Normal   nodeAssigned      3s (x8 over 16m)     metallb-speaker     announcing from node "k8snode1.k8s.askov.net" with protocol "bgp"
+  Normal   nodeAssigned      3s (x5 over 16m)     metallb-speaker     announcing from node "k8snode2.k8s.askov.net" with protocol "bgp"
+  Normal   IPAllocated       3s                   metallb-controller  Assigned IP ["192.168.32.2"]
+aabl@fedora:~$ kubectl get service test 
+```
+
+Above you can also see the leftover of my trying to assign an IP address outside the allowed pool.
+
+Now we can see that the service have gotten the external IP assigned
+```
+aabl@fedora:~$ kubectl get service test 
+NAME   TYPE           CLUSTER-IP      EXTERNAL-IP    PORT(S)        AGE
+test   LoadBalancer   10.43.129.111   192.168.32.2   80:32449/TCP   7d2h
+aabl@fedora:~$ 
+```
