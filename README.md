@@ -9,7 +9,7 @@ Episodes
 * [X] [VM setup](VMs.md)
 * [X] [K3s](K3s.md) 
 * [X] [MetalLB and PFSense](MetalLB.md)
-* [ ] [DNS resolution for PFSense](DNS.md)
+* [X] [DNS resolution for PFSense](DNS.md)
 * [X] [Longhorn (storage)](Longhorn.md)
 * [ ] Kubernetes Dashboard
 * [ ] Monitoring
