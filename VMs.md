@@ -6,7 +6,7 @@ The master nodes do not need to be powerful; rather they need to be fast. So the
 
 Reasoning
 --------------------------------
-It has proven supprisingly difficult to procure sufficiently small and cheap machines. Most cheap computers sold have way too many resources and are thus to power-intensive.
+It has proven surprisingly difficult to procure sufficiently small and cheap machines. Most cheap computers sold have way too many resources and are thus to power-intensive.
 
 So we have opted for virtualization for the master nodes, as this will allow us to place multiple virtual machines on a single machine.
 As the master nodes will not be executing user processes, the overhead with virtualization will not matter much.

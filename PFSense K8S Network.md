@@ -16,26 +16,26 @@ The PFSense VM is running DHCP and DNS forwarding.
 So, the connection from my local workstation to say `k8snode1` is as follows
 
 1. Local workstation 
-   * WIFI
+   * 🛜 
 2. ASUS RT-AX92U mesh unit3 (192.168.2.32)
-   * WIFI
+   * 🛜
 3. ASUS RT-AX92U mesh unit2 (192.168.2.37)
-   * WIFI
+   * 🛜
 4. ASUS RT-AX92U mesh unit1 (192.168.2.6)
-    * Ethernet
+    * Ethernet :arrow_down:
 5. Server eno1 -> bridge0 -> PFSense (LAN/192.168.2.1)
     * Internal routing to (K8S/192.168.4.1) 
 6. bridge1 -> Server enp0s20f0u5c2 
     * Ethernet
 7. AXE5400 Router (192.168.4.3)
-   * WIFI
+   * 🛜
 8. AX11000 Router (192.168.4.5)
    * Ethernet
 9. `k8snode1` (192.168.4.10)
 
 Why did it create this abomination? Well, first of, you play with the hardware you got, not the hardware you want. 
 
-I have 3 ASUS routers that can mesh, so they are my normal LAN network. I live in the kind of building where one router cannot cover the entire apartment, so mesh is nessesary.
+I have 3 ASUS routers that can mesh, so they are my normal LAN network. I live in the kind of building where one router cannot cover the entire apartment, so mesh is necessary.
 
 I was given two TP-Link routers. Of course, they cannot do mesh with ASUS, or even with each other... TP-Link, how you never fail to disappoint.
 AXE5400 is set to Access Point mode, and the DHCP server is disabled. It provides the WI-FI Network `K8S`
@@ -43,7 +43,7 @@ The AX11000 is also set to Access Point Mode, but before setting it to this, I c
 
 As for the USB3 Ethernet interface... Well, the server only has two network interfaces, and I use both. So a extra network interface was needed, and this seems to work well enough.
 
-I want my Kubernetes cluster to consist of both VMs and physical nodes. Furthermore I want the physical nodes to be placed in a nearby shed. Thus, I need to have WI-FI connection to the nodes. But I do NOT want the Kubernetes system to have to deal with WI-FI connection. Kubernetes networking is complex enough as it is. Thus, by using two WI-FI Routers, I could isolate Kubernetes from WI-FI. 
+I want my Kubernetes cluster to consist of both VMs and physical nodes. Furthermore, I want the physical nodes to be placed in a nearby shed. Thus, I need to have WI-FI connection to the nodes. But I do NOT want the Kubernetes system to have to deal with WI-FI connection. Kubernetes networking is complex enough as it is. Thus, by using two WI-FI Routers, I could isolate Kubernetes from WI-FI. 
 
 How was this set up
 --------------------------------
