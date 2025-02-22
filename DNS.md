@@ -49,7 +49,8 @@ spec:
 
 Then we must reconfigure CoreDNS to use the `k8s_external` plugin.
 In fact, all we need to do is add the line `k8s_external k8s.askov.net` to the config map `coredns`
-(TODO this change might be lost on restart?)
+
+*this change WILL be lost on restart*
 
 The full configmap will then be
 ```yaml
@@ -92,6 +93,21 @@ data:
 ```
 
 The line `k8s_external k8s.askov.net` instructs CoreDNS to load the `k8s_external` plugin and become a DNS server for the given domain (`k8s.askov.net`), and thus respond to requests with the given Load Balancer IP.
+
+Note: In order for us to preserve the change on reboot, we rather have to create a new configmap (see <https://docs.digitalocean.com/products/kubernetes/how-to/customize-coredns/>)
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coredns-custom
+  namespace: kube-system
+data:
+  k8s_external.override: |
+    k8s_external k8s.askov.net {
+      fallthrough
+    }
+```
+This will hook into the `import /etc/coredns/custom/*.override` statement from the original config map.
 
 With this change, we can immediately see that we can resolve the `test` service as both `test.default.svc.cluster.local` and `test.default.k8s.askov.net`
 
