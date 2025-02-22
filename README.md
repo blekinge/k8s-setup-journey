@@ -11,7 +11,7 @@ Episodes
 * [X] [MetalLB and PFSense](MetalLB.md)
 * [X] [DNS resolution for PFSense](DNS.md)
 * [X] [Longhorn (storage)](Longhorn.md)
-* [ ] Kubernetes Dashboard
+* [ ] [Kubernetes Dashboard](Dashboard.md)
 * [ ] Monitoring
 
 
