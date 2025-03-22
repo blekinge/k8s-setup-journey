@@ -113,6 +113,21 @@ With this change, we can immediately see that we can resolve the `test` service 
 
 (note: You might have to restart the coredns pods (just delete them))
 
+> TODO: If the host's `/etc/resolv.conf` have multiple nameservers, coredns will forward to them round-robin style.
+> See https://github.com/coredns/coredns/issues/3147
+> 
+> replace 
+> `forward . /etc/resolv.conf`
+> with 
+> ```
+>         forward . /etc/resolv.conf {
+>           policy sequential
+>         }
+> ```
+> to fix this. 
+> This "bug" took a fun afternoon to diagnose. 
+> 
+
 ```
 [aabl@k8smaster1 ~]$ nslookup test.default.svc.cluster.local 192.168.32.1
 Server:		192.168.32.1
