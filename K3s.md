@@ -361,3 +361,42 @@ Commercial support is available at
 ```
 
 So the nginx pods are running and I can reach them from inside the cluster. But the IP addresses `10.42.x.x` are internal and cannot be accessed from my workstation.
+
+Remote access to the cluster
+----------------------------------------------
+
+So, now we got the cluster running, but we also want to be able to access it from our workstation. Doing this is quite straightforward (if you consider this `yq`-manhandling of the file straight-forward... )
+
+```
+ssh aabl@k8smaster1 << EOF
+# Install yq if needed
+yq --version || (sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq && sudo chmod +x /usr/local/bin/yq)
+
+# Set some variables
+export CLUSTER_NAME="\$(hostname -d)"
+export CLUSTER_HOST="\$(hostname)"
+
+# Export and transform the config of the cluster
+kubectl config view --raw | \
+    yq  '(.contexts[] | select(.name == "default") | .name) = strenv(CLUSTER_NAME) |
+         (.contexts[] | select(.name == strenv(CLUSTER_NAME)) | .context.cluster) = strenv(CLUSTER_NAME) |    
+         (.clusters[] | select(.name == "default") | .name) = strenv(CLUSTER_NAME) |
+         (.clusters[] | select(.name == strenv(CLUSTER_NAME)) | .cluster.server) = "https://"+strenv(CLUSTER_HOST)+":6443" |
+         (.contexts[] | select(.name == strenv(CLUSTER_NAME)) | .context.user) = strenv(CLUSTER_NAME)+"-admin" | 
+         (.users[] | select(.name == "default") | .name) = strenv(CLUSTER_NAME)+"-admin"' > ~/.kube/config
+EOF
+
+# Download the config
+mkdir -p ${HOME}/.kube/contexts 
+scp aabl@k8smaster1:~/.kube/config "${HOME}/.kube/contexts/k8s.askov.net.conf"
+
+# Setup profile to use the config
+echo 'for file in ${HOME}/.kube/contexts/*.conf; do 
+  KUBECONFIG=$(echo "${KUBECONFIG:-$HOME/.kube/config}:$file" | tr ":" "\n" | grep -v "^$" | sort -u | paste -sd ":" -);
+done;
+export KUBECONFIG; ' >> ~/.profile
+source ~/.profile
+```
+The problem is that the cluster config uses local adresses, such as `127.0.0.1` and default, which works well while inside the cluster. But when we need to use the config to connect from our workstation, we need to change the names and adresses to the external names.
+
+
