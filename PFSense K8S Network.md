@@ -25,7 +25,7 @@ So, the connection from my local workstation to say `k8snode1` is as follows
     * Ethernet :arrow_down:
 5. Server eno1 -> bridge0 -> PFSense (LAN/192.168.2.1)
     * Internal routing to (K8S/192.168.4.1) 
-6. bridge1 -> Server enp0s20f0u5c2 
+6. bridge1 -> Server enp0s20f0u2c2 
     * Ethernet
 7. AXE5400 Router (192.168.4.3)
    * 🛜
