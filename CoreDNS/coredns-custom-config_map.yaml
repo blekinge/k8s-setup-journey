@@ -1,10 +1,11 @@
-apiVersion: v1
-kind: ConfigMap
+---
+apiVersion: "v1"
+kind: "ConfigMap"
 metadata:
-  name: coredns-custom
-  namespace: kube-system
+  name: "coredns-custom"
+  namespace: "kube-system"
 data:
-  k8s_external.override: |
-    k8s_external k8s.askov.net {
+  k8s_external.override: |-
+    k8s_external app.k8s.askov.net {
       fallthrough
     }

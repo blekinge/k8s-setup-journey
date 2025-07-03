@@ -69,7 +69,7 @@ data:
           pods insecure
           fallthrough in-addr.arpa ip6.arpa
         }
-        k8s_external k8s.askov.net {
+        k8s_external app.k8s.askov.net {
           fallthrough
         }
         hosts /etc/coredns/NodeHosts {
@@ -90,9 +90,10 @@ data:
     192.168.4.4 k8smaster1.k8s.askov.net
     192.168.4.10 k8snode1.k8s.askov.net
     192.168.4.20 k8snode2.k8s.askov.net
+    192.168.4.30 k8snode3.k8s.askov.net
 ```
 
-The line `k8s_external k8s.askov.net` instructs CoreDNS to load the `k8s_external` plugin and become a DNS server for the given domain (`k8s.askov.net`), and thus respond to requests with the given Load Balancer IP.
+The line `k8s_external app.k8s.askov.net` instructs CoreDNS to load the `k8s_external` plugin and become a DNS server for the given domain (`app.k8s.askov.net`), and thus respond to requests with the given Load Balancer IP.
 
 Note: In order for us to preserve the change on reboot, we rather have to create a new configmap (see <https://docs.digitalocean.com/products/kubernetes/how-to/customize-coredns/>)
 ```yaml
@@ -103,13 +104,13 @@ metadata:
   namespace: kube-system
 data:
   k8s_external.override: |
-    k8s_external k8s.askov.net {
+    k8s_external app.k8s.askov.net {
       fallthrough
     }
 ```
 This will hook into the `import /etc/coredns/custom/*.override` statement from the original config map.
 
-With this change, we can immediately see that we can resolve the `test` service as both `test.default.svc.cluster.local` and `test.default.k8s.askov.net`
+With this change, we can immediately see that we can resolve the `test` service as both `test.default.svc.cluster.local` and `test.default.app.k8s.askov.net`
 
 (note: You might have to restart the coredns pods (just delete them))
 
@@ -137,11 +138,11 @@ Name:	test.default.svc.cluster.local
 Address: 10.43.129.111
 
 [aabl@k8smaster1 ~]$ 
-[aabl@k8smaster1 ~]$ nslookup test.default.k8s.askov.net 192.168.32.1
+[aabl@k8smaster1 ~]$ nslookup test.default.app.k8s.askov.net 192.168.32.1
 Server:		192.168.32.1
 Address:	192.168.32.1#53
 
-Name:	test.default.k8s.askov.net
+Name:	test.default.app.k8s.askov.net
 Address: 192.168.32.2
 
 [aabl@k8smaster1 ~]$ 
@@ -150,7 +151,7 @@ Address: 192.168.32.2
 When performing the lookup from my local workstation it also works
 (here 192.168.2.1 is the pfsense firewall ip)
 ```
-aabl@fedora:~$ nslookup test.default.k8s.askov.net 192.168.2.1
+aabl@fedora:~$ nslookup test.default.app.k8s.askov.net 192.168.2.1
 Server:		192.168.2.1
 Address:	192.168.2.1#53
 
@@ -158,7 +159,7 @@ Name:	test.default.k8s.askov.net
 Address: 192.168.32.2
 
 aabl@fedora:~$ 
-aabl@fedora:~$ nslookup test.default.k8s.askov.net 192.168.32.1
+aabl@fedora:~$ nslookup test.default.app.k8s.askov.net 192.168.32.1
 Server:		192.168.32.1
 Address:	192.168.32.1#53
 
@@ -170,7 +171,7 @@ aabl@fedora:~$
 
 And we can thus access the service by it's DNS name
 ```
-aabl@fedora:~$ curl test.default.k8s.askov.net
+aabl@fedora:~$ curl test.default.app.k8s.askov.net
 <!DOCTYPE html>
 <html>
 <head>
