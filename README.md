@@ -7,11 +7,18 @@ Episodes
 ---------------
 * [X] [PFSense network setup](/PFSense%20K8S%20Network.md) 
 * [X] [VM setup](VMs.md)
-* [X] [K3s](K3s.md) 
-* [X] [MetalLB and PFSense](MetalLB.md)
-* [X] [DNS resolution for PFSense](DNS.md)
+* [X] [K3s](K3s.md)
+* [ ] Networking
+  * [X] [MetalLB and PFSense](MetalLB.md)
+  * [X] [DNS resolution for PFSense](DNS.md)
+  * [ ] [Istio](Istio.md)
+  * [ ] [Cert Manager](CertManager.md)
+  * [ ] [Traefik](Traefik.md)
 * [X] [Longhorn (storage)](Longhorn.md)
-* [ ] [Kubernetes Dashboard](Dashboard.md)
 * [ ] Monitoring
+  * [X] [Kubernetes Dashboard](Dashboard.md)
+  * [ ] [Kiali](Kiali.md)
+  * [X] [Prometheus](Prometheus.md)
+  * [ ] [Grafana](Grafana.md)
 
 
