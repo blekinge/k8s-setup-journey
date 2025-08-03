@@ -321,8 +321,7 @@ Preparing LVM
 ----------------
 
 Longhorn does not support sharding, i.e. having one virtual drive span multiple drives.
-As I have multiple 1TB M.2 drives, I need to combine them to a common file system, if I want to be able to
-make Volumes bigger than 1TB.
+As I have multiple 1TB M.2 drives, I need to combine them to a common file system, if I want to be able to make Volumes bigger than 1TB.
 
 LVM seems like the right choice for this.
 
