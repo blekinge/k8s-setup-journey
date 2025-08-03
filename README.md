@@ -17,7 +17,7 @@ Episodes
 * [X] [Longhorn (storage)](Longhorn.md)
 * [ ] Monitoring
   * [X] [Kubernetes Dashboard](Dashboard.md)
-  * [ ] [Kiali](Kiali.md)
+  * [X] [Kiali](Kiali.md)
   * [X] [Prometheus](Prometheus.md)
   * [ ] [Grafana](Grafana.md)
 
