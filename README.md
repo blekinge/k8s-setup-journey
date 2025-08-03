@@ -11,7 +11,7 @@ Episodes
 * [ ] Networking
   * [X] [MetalLB and PFSense](MetalLB.md)
   * [X] [DNS resolution for PFSense](DNS.md)
-  * [ ] [Istio](Istio.md)
+  * [X] [Istio](Istio.md)
   * [ ] [Cert Manager](CertManager.md)
   * [ ] [Traefik](Traefik.md)
 * [X] [Longhorn (storage)](Longhorn.md)

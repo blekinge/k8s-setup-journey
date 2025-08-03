@@ -1,0 +1,30 @@
+apiVersion: "kiali.io/v1alpha1"
+kind: "Kiali"
+metadata:
+  annotations:
+    ansible.sdk.operatorframework.io/verbosity: "1"
+    meta.helm.sh/release-name: "kiali-operator"
+    meta.helm.sh/release-namespace: "kiali-operator"
+  creationTimestamp: "2025-08-03T12:14:06Z"
+  finalizers:
+  - "kiali.io/finalizer"
+  generation: 2
+  labels:
+    app: "kiali-operator"
+    app.kubernetes.io/instance: "kiali-operator"
+    app.kubernetes.io/managed-by: "Helm"
+    app.kubernetes.io/name: "kiali-operator"
+    app.kubernetes.io/part-of: "kiali-operator"
+    app.kubernetes.io/version: "v2.13.0"
+    helm.sh/chart: "kiali-operator-2.13.0"
+    version: "v2.13.0"
+  name: "kiali"
+  namespace: "istio-system"
+spec:
+  auth:
+    strategy: "anonymous"
+  deployment:
+    cluster_wide_access: true
+  external_services:
+    prometheus:
+      url: "http://prometheus-server.monitoring:80"
