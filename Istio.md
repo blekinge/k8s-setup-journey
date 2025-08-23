@@ -175,3 +175,33 @@ http://localhost:20001/kiali/console/graph/namespaces/?traffic=ambient%2Cambient
 ![img.png](img.png)
 
 
+
+
+
+ Enforce Layer 4 authorization policy
+---------------------------------
+
+Let’s create an authorization policy that restricts which services can communicate with the productpage service. The policy is applied to pods with the app: productpage label, and it allows calls only from the the service account cluster.local/ns/default/sa/bookinfo-gateway-istio. This is the service account that is used by the Bookinfo gateway you deployed in the previous step.
+
+```
+$ kubectl apply -f - <<EOF
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: productpage-ztunnel
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: productpage
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        principals:
+        - cluster.local/ns/default/sa/bookinfo-gateway-istio
+EOF
+```
+If you open the Bookinfo application in your browser (http://localhost:8080/productpage), you will see the product page, just as before. However, if you try to access the productpage service from a different service account, you should see an error.
+
+Let’s try accessing Bookinfo application from a different client in the cluster:

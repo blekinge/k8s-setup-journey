@@ -6,7 +6,11 @@ A load-balancer handles the assignment and resolution of externally reachable IP
 
 For now, we just install MetalLB with the simplest possible command
 ```
-kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.8/config/manifests/metallb-native.yaml
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.15.2/config/manifests/metallb-native.yaml
+
+ helm install prometheus-operator-crds prometheus-community/prometheus-operator-crds --namespace monitoring
+
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.15.2/config/manifests/metallb-native-prometheus.yaml
 ```
 
 We have chosen MetalLB because it can use the [Border Gateway Protocol](https://en.wikipedia.org/wiki/Border_Gateway_Protocol) to communicate with PFSense.

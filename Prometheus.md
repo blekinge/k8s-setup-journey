@@ -13,7 +13,7 @@ helm repo update
 Then, install Prometheus with the Longhorn storage class:
 ```
 kubectl create namespace monitoring
-helm upgrade --install prometheus prometheus-community/prometheus \
+helm install prometheus prometheus-community/prometheus \
     --namespace monitoring \
     --set alertmanager.persistence.storageClass="longhorn" \
     --set server.persistentVolume.storageClass="longhorn"
