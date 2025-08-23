@@ -1,0 +1,33 @@
+---
+
+- name: Install Tools
+  package:
+    name: "{{ yum_packages }}"
+    state: present
+
+- name: Upgrade all packages
+  package:
+    name: '*'
+    state: latest
+
+- name: Check if we need to restart
+  shell:
+    cmd: /usr/bin/needs-restarting -r
+  register: needs_restarting
+  failed_when: needs_restarting.rc >= 2
+  changed_when: no
+
+
+- name: reboot
+  reboot:
+  when: needs_restarting.rc != 0
+
+
+- name: "Wait 600 seconds for host to become reachable/usable"
+#  remote_user: root # Ensure that we do not try to login as a user that does not exist yet
+  become: no
+  wait_for_connection:
+    delay: 0 # Number of seconds to wait before starting to poll.
+    timeout: 600 # Maximum number of seconds to wait for.
+    sleep: 2 # Number of seconds to sleep between checks.
+    connect_timeout: 5 # Maximum number of seconds to wait for a connection to happen before closing and retrying.

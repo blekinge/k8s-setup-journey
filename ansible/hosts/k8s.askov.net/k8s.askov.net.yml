@@ -1,0 +1,38 @@
+# You will make one inventory file per cluster. So all cluster-specific settings should go into this file
+
+# These are the magical hostgroups that are automagically bound to roles and behaviours
+# hostgroup_VMs: Machines to auto-create in ovirt
+# hostgroup_ipaserver: the FreeIPA server to register all hosts to
+# hostgroup_ipaclients: The list of hosts to setup as ipa clients
+# hostgroup_rsyslog_server: The rsyslog server forward all log messages to
+# hostgroup_zabbix_nodes: The list of hosts to setup zabbix agent on
+# hostgroup_hadoop_nodes: = role hadoop, role zookeeper, role spark
+# hostgroup_hdfs_namenodes: = role hadoop_hdfs_namenode
+# hostgroup_hdfs_journalnodes: = role hadoop_hdfs_journalnode
+# hostgroup_hdfs_datanodes: = role hadoop_hdfs_datanode
+# hostgroup_zookeeper_servers: = role zookeeper_server
+# hostgroup_yarn_resource_managers: = role hadoop_yarn_resource_manager
+# hostgroup_yarn_node_managers: = role hadoop_yarn_node_manager
+# hostgroup_yarn_timeline_servers: = role hadoop_yarn_timeline_server
+# hostgroup_mapreduce_history_servers: = role hadoop_mapreduce_history_server
+# hostgroup_spark_history_servers: = role spark_history_server
+# hostgroup_project_nodes: = role spark_client, role rstudio_server
+
+hostgroup_all:
+  children:
+    hostgroup_ansible_host:
+      hosts:
+        localhost:
+    hostgroup_k8s:
+      children:
+        hostgroup_masters:
+          hosts:
+            k8smaster1.k8s.askov.net:
+            k8smaster2.k8s.askov.net:
+            k8smaster3.k8s.askov.net:
+        hostgroup_nodes:
+          hosts:
+            k8snode1.k8s.askov.net:
+            k8snode2.k8s.askov.net:
+            k8snode3.k8s.askov.net:
+

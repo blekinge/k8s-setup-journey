@@ -1,0 +1,4 @@
+# YUM Update and reboot on all k8s nodes
+- hosts: hostgroup_k8s
+  roles:
+    - role: updated

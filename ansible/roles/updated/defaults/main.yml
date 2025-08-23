@@ -1,0 +1,5 @@
+yum_packages:
+  - git
+  - rsync
+  - wget
+  - yum-utils
