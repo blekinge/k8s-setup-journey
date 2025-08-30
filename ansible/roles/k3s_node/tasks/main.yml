@@ -1,0 +1,38 @@
+---
+
+
+- name: Check k3s version
+  shell:
+    cmd: "/usr/local/bin/k3s --version | grep -F '{{ k3s_version }}'"
+  register: k3s_version_ok
+  changed_when: false
+  failed_when: false
+
+- name: k3s
+  when: k3s_version_ok.rc != 0
+  block:
+    - name: create join token
+      delegate_to: "{{ groups['hostgroup_masters'] | first }}"
+      shell:
+        cmd: "/usr/local/bin/k3s token create"
+      register: token_create
+
+    - name: register join token
+      set_fact:
+        k3s_join_token: "{{ token_create.stdout }}"
+        k3s_join_token_short: "{{ token_create.stdout.split(':')[2].split('.')[0] }}"
+      delegate_facts: True
+
+    - name: Install/update k3s
+      shell:
+        cmd: "curl -sfL https://get.k3s.io |
+              INSTALL_K3S_EXEC='agent'
+              INSTALL_K3S_VERSION='{{ k3s_version }}'
+              K3S_URL='{{ k3s_url }}'
+              K3S_TOKEN='{{ k3s_join_token }}'
+              sh -"
+  always:
+    - name: removed join token
+      delegate_to: "{{ groups['hostgroup_masters'] | first }}"
+      shell:
+        cmd: "/usr/local/bin/k3s token delete {{ k3s_join_token_short }} "

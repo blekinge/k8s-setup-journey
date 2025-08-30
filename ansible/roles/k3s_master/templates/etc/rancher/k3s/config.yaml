@@ -1,0 +1,4 @@
+write-kubeconfig-group: "wheel"
+write-kubeconfig-mode: "0640"
+disable:
+  - servicelb

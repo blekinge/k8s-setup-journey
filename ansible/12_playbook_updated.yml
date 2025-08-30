@@ -2,3 +2,11 @@
 - hosts: hostgroup_k8s
   roles:
     - role: updated
+
+- hosts: hostgroup_masters
+  roles:
+    - role: k3s_master
+
+- hosts: hostgroup_nodes
+  roles:
+    - role: k3s_node

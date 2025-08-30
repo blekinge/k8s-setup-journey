@@ -28,8 +28,8 @@ hostgroup_all:
         hostgroup_masters:
           hosts:
             k8smaster1.k8s.askov.net:
-            k8smaster2.k8s.askov.net:
-            k8smaster3.k8s.askov.net:
+#            k8smaster2.k8s.askov.net:
+#            k8smaster3.k8s.askov.net:
         hostgroup_nodes:
           hosts:
             k8snode1.k8s.askov.net:

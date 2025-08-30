@@ -1,0 +1,3 @@
+k3s_version: "v1.33.4+k3s1"
+
+k3s_url: "https://{{ groups['hostgroup_masters'] | map('extract',hostvars, 'ansible_fqdn') | first }}:6443"
