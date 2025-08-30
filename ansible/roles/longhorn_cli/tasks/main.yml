@@ -27,3 +27,8 @@
   environment: "{{ k3s_environment }}"
   register: preflight_install
   changed_when: '"installed package" in preflight_install.stderr'
+
+- name: longhorn install
+  command:
+    cmd: "/usr/local/bin/kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/{{ longhorn_version }}/deploy/longhorn.yaml"
+  environment: "{{ k3s_environment }}"
