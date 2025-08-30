@@ -1,0 +1,29 @@
+---
+
+- name: Check longhornctl version
+  shell:
+    cmd: "/usr/local/bin/longhornctl version | grep -F '{{ longhorn_version }}'"
+  register: longhornctl_version_ok
+  changed_when: no
+  failed_when: no
+
+- name: install longhornctl
+  when: longhornctl_version_ok.rc != 0
+  shell:
+    cmd: "curl -sSfL -o /usr/local/bin/longhornctl https://github.com/longhorn/cli/releases/download/{{ longhorn_version }}/longhornctl-linux-amd64 
+          && chmod a+x /usr/local/bin/longhornctl"
+
+- name: longhornctl preflight
+  command:
+    cmd: "/usr/local/bin/longhornctl check preflight"
+  environment: "{{ k3s_environment }}"
+  register: preflight
+  changed_when: no
+
+- name: longhornctl preflight install
+  when: "'error:' in preflight.stderr"
+  command:
+    cmd: "/usr/local/bin/longhornctl install preflight"
+  environment: "{{ k3s_environment }}"
+  register: preflight_install
+  changed_when: '"installed package" in preflight_install.stderr'

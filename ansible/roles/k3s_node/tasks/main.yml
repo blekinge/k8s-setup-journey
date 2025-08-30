@@ -3,7 +3,7 @@
 
 - name: Check k3s version
   shell:
-    cmd: "/usr/local/bin/k3s --version | grep -F '{{ k3s_version }}'"
+    cmd: "/usr/local/bin/longhornctl --version | grep -F '{{ k3s_version }}'"
   register: k3s_version_ok
   changed_when: false
   failed_when: false
@@ -13,7 +13,7 @@
   block:
     - name: create join token
       delegate_to: "{{ groups['hostgroup_masters'] | first }}"
-      shell:
+      command:
         cmd: "/usr/local/bin/k3s token create"
       register: token_create
 
@@ -34,5 +34,5 @@
   always:
     - name: removed join token
       delegate_to: "{{ groups['hostgroup_masters'] | first }}"
-      shell:
+      command:
         cmd: "/usr/local/bin/k3s token delete {{ k3s_join_token_short }} "
