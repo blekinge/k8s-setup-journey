@@ -1,0 +1,4 @@
+- hosts: hostgroup_k8s
+  gather_facts: False
+  roles:
+    - role: shutdown

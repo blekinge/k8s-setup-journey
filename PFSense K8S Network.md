@@ -41,7 +41,7 @@ I was given two TP-Link routers. Of course, they cannot do mesh with ASUS, or ev
 AXE5400 is set to Access Point mode, and the DHCP server is disabled. It provides the WI-FI Network `K8S`
 The AX11000 is also set to Access Point Mode, but before setting it to this, I could set up is WI-FI Gateway. This setting persists when the device is set to Access Point Mode, but disappears from the menu. 
 
-As for the USB3 Ethernet interface... Well, the server only has two network interfaces, and I use both. So a extra network interface was needed, and this seems to work well enough.
+As for the USB3 Ethernet interface... Well, the server only has two network interfaces, and I use both. So an extra network interface was needed, and this seems to work well enough.
 
 I want my Kubernetes cluster to consist of both VMs and physical nodes. Furthermore, I want the physical nodes to be placed in a nearby shed. Thus, I need to have WI-FI connection to the nodes. But I do NOT want the Kubernetes system to have to deal with WI-FI connection. Kubernetes networking is complex enough as it is. Thus, by using two WI-FI Routers, I could isolate Kubernetes from WI-FI. 
 

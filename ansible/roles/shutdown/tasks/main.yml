@@ -1,0 +1,5 @@
+---
+
+- name: poweroff
+  command:
+    cmd: systemctl poweroff
