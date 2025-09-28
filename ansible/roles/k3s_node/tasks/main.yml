@@ -3,7 +3,7 @@
 
 - name: Check k3s version
   shell:
-    cmd: "/usr/local/bin/longhornctl --version | grep -F '{{ k3s_version }}'"
+    cmd: "/usr/local/bin/k3s --version | grep -F '{{ k3s_version }}'"
   register: k3s_version_ok
   changed_when: false
   failed_when: false

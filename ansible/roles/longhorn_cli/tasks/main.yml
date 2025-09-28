@@ -26,7 +26,7 @@
     cmd: "/usr/local/bin/longhornctl install preflight"
   environment: "{{ k3s_environment }}"
   register: preflight_install
-  changed_when: '"installed package" in preflight_install.stderr'
+  changed_when: "'installed package' in preflight_install.stderr"
 
 - name: longhorn install
   command:

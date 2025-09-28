@@ -8,7 +8,7 @@ For now, we just install MetalLB with the simplest possible command
 ```
 kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.15.2/config/manifests/metallb-native.yaml
 
- helm install prometheus-operator-crds prometheus-community/prometheus-operator-crds --namespace monitoring
+helm install prometheus-operator-crds prometheus-community/prometheus-operator-crds --namespace monitoring
 
 kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.15.2/config/manifests/metallb-native-prometheus.yaml
 ```
