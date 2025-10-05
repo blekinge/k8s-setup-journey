@@ -22,3 +22,21 @@ Episodes
   * [ ] [Grafana](Grafana.md)
 
 
+# URLS
+
+https://pfsense.askov.net/services_wol.php
+
+https://kubernetes-dashboard.kubernetes-dashboard.app.k8s.askov.net
+Retrieve token with
+```
+kubectl get secret kubernetes-dashboard-serviceaccount-secret -n kubernetes-dashboard -o jsonpath="{.data.token}" | base64 -d
+```
+
+http://longhorn-ui.longhorn-system.app.k8s.askov.net
+
+
+```
+istioctl dashboard kiali
+istioctl dashboard grafana
+istioctl dashboard prometheus
+```
