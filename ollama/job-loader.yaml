@@ -1,0 +1,31 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ollama-model-loader
+  namespace: ollama-system
+spec:
+  template:
+    spec:
+      containers:
+      - name: model-loader
+        image: curlimages/curl:latest
+        command:
+        - sh
+        - -c
+        - |
+          # Wait for Ollama service
+          until curl -f http://ollama-service:11434/api/version; do
+            echo "Waiting for Ollama..."
+            sleep 5
+          done
+          
+          # Pull essential models
+          curl -X POST http://ollama-service:11434/api/pull \
+            -H "Content-Type: application/json" \
+            -d '{"name": "llama2:7b"}'
+          
+          curl -X POST http://ollama-service:11434/api/pull \
+            -H "Content-Type: application/json" \
+            -d '{"name": "codellama:7b"}'
+      restartPolicy: OnFailure
+  backoffLimit: 3

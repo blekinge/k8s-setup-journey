@@ -1,0 +1,215 @@
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "3"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{"deployment.kubernetes.io/revision":"2"},"creationTimestamp":"2025-10-05T13:32:44Z","generation":1,"name":"ollama","namespace":"ollama-system","resourceVersion":"2145140","uid":"ea44fdd5-0501-4720-8c93-73163e05732a"},"spec":{"progressDeadlineSeconds":600,"replicas":1,"revisionHistoryLimit":10,"selector":{"matchLabels":{"app":"ollama"}},"strategy":{"rollingUpdate":{"maxSurge":"25%","maxUnavailable":"25%"},"type":"RollingUpdate"},"template":{"metadata":{"labels":{"app":"ollama"}},"spec":{"containers":[{"env":[{"name":"OLLAMA_HOST","value":"0.0.0.0"},{"name":"OLLAMA_MODELS","value":"/root/.ollama/models"}],"image":"ollama/ollama:latest","imagePullPolicy":"Always","lifecycle":{"postStart":{"exec":{"command":["/bin/sh","-c","mkdir -p $OLLAMA_MODELS; touch $OLLAMA_MODELS/testfile; if [ ! -f /root/.ollama/initialized ]; then ollama run llama3.1:8b-instruct-q8_0 \u0026\u0026 touch /root/.ollama/initialized; fi"]}}},"name":"ollama","ports":[{"containerPort":11434,"protocol":"TCP"}],"resources":{"limits":{"cpu":"4","memory":"16Gi"},"requests":{"cpu":"1","memory":"2Gi"}},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","volumeMounts":[{"mountPath":"/root/.ollama","name":"ollama-data"}]}],"dnsPolicy":"ClusterFirst","restartPolicy":"Always","schedulerName":"default-scheduler","securityContext":{},"terminationGracePeriodSeconds":30,"volumes":[{"name":"ollama-data","persistentVolumeClaim":{"claimName":"ollama-pvc"}}]}}},"status":{"availableReplicas":1,"collisionCount":1,"conditions":[{"lastTransitionTime":"2025-10-05T13:45:57Z","lastUpdateTime":"2025-10-05T13:45:57Z","message":"Deployment has minimum availability.","reason":"MinimumReplicasAvailable","status":"True","type":"Available"},{"lastTransitionTime":"2025-10-05T13:32:44Z","lastUpdateTime":"2025-10-05T13:45:57Z","message":"ReplicaSet \"ollama-c4c6bbfdf\" has successfully progressed.","reason":"NewReplicaSetAvailable","status":"True","type":"Progressing"}],"observedGeneration":1,"readyReplicas":1,"replicas":1,"updatedReplicas":1}}
+  creationTimestamp: "2025-10-05T13:32:44Z"
+  generation: 4
+  managedFields:
+  - apiVersion: "apps/v1"
+    fieldsType: "FieldsV1"
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          .: {}
+          f:kubectl.kubernetes.io/last-applied-configuration: {}
+      f:spec:
+        f:progressDeadlineSeconds: {}
+        f:revisionHistoryLimit: {}
+        f:selector: {}
+        f:strategy:
+          f:rollingUpdate:
+            .: {}
+            f:maxSurge: {}
+            f:maxUnavailable: {}
+          f:type: {}
+        f:template:
+          f:metadata:
+            f:labels:
+              .: {}
+              f:app: {}
+          f:spec:
+            f:containers:
+              k:{"name":"ollama"}:
+                .: {}
+                f:env:
+                  .: {}
+                  k:{"name":"OLLAMA_HOST"}:
+                    .: {}
+                    f:name: {}
+                    f:value: {}
+                  k:{"name":"OLLAMA_MODELS"}:
+                    .: {}
+                    f:name: {}
+                    f:value: {}
+                f:image: {}
+                f:imagePullPolicy: {}
+                f:lifecycle:
+                  .: {}
+                  f:postStart:
+                    .: {}
+                    f:exec:
+                      .: {}
+                      f:command: {}
+                f:name: {}
+                f:ports:
+                  .: {}
+                  k:{"containerPort":11434,"protocol":"TCP"}:
+                    .: {}
+                    f:containerPort: {}
+                    f:protocol: {}
+                f:resources:
+                  .: {}
+                  f:limits:
+                    .: {}
+                    f:cpu: {}
+                    f:memory: {}
+                  f:requests:
+                    .: {}
+                    f:cpu: {}
+                    f:memory: {}
+                f:terminationMessagePath: {}
+                f:terminationMessagePolicy: {}
+                f:volumeMounts:
+                  .: {}
+                  k:{"mountPath":"/root/.ollama"}:
+                    .: {}
+                    f:mountPath: {}
+                    f:name: {}
+            f:dnsPolicy: {}
+            f:restartPolicy: {}
+            f:schedulerName: {}
+            f:securityContext: {}
+            f:terminationGracePeriodSeconds: {}
+            f:volumes:
+              .: {}
+              k:{"name":"ollama-data"}:
+                .: {}
+                f:name: {}
+                f:persistentVolumeClaim:
+                  .: {}
+                  f:claimName: {}
+    manager: "kubectl-client-side-apply"
+    operation: "Update"
+    time: "2025-10-05T13:46:18Z"
+  - apiVersion: "apps/v1"
+    fieldsType: "FieldsV1"
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          f:deployment.kubernetes.io/revision: {}
+      f:status:
+        f:availableReplicas: {}
+        f:collisionCount: {}
+        f:conditions:
+          .: {}
+          k:{"type":"Available"}:
+            .: {}
+            f:lastTransitionTime: {}
+            f:lastUpdateTime: {}
+            f:message: {}
+            f:reason: {}
+            f:status: {}
+            f:type: {}
+          k:{"type":"Progressing"}:
+            .: {}
+            f:lastTransitionTime: {}
+            f:lastUpdateTime: {}
+            f:message: {}
+            f:reason: {}
+            f:status: {}
+            f:type: {}
+        f:observedGeneration: {}
+        f:readyReplicas: {}
+        f:replicas: {}
+        f:updatedReplicas: {}
+    manager: "k3s"
+    operation: "Update"
+    subresource: "status"
+    time: "2025-10-05T13:54:51Z"
+  name: "ollama"
+  namespace: "ollama-system"
+  resourceVersion: "2146838"
+  uid: "ea44fdd5-0501-4720-8c93-73163e05732a"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "ollama"
+  template:
+    metadata:
+      labels:
+        app: "ollama"
+    spec:
+      volumes:
+      - name: "ollama-data"
+        persistentVolumeClaim:
+          claimName: "ollama-pvc"
+      containers:
+      - name: "ollama"
+        image: "ollama/ollama:latest"
+        ports:
+        - containerPort: 11434
+          protocol: "TCP"
+        env:
+        - name: "OLLAMA_HOST"
+          value: "0.0.0.0"
+        - name: "OLLAMA_MODELS"
+          value: "/root/.ollama/models"
+        resources:
+          limits:
+            cpu: "4"
+            memory: "16Gi"
+          requests:
+            cpu: "1"
+            memory: "2Gi"
+        volumeMounts:
+        - name: "ollama-data"
+          mountPath: "/root/.ollama"
+        lifecycle:
+          postStart:
+            exec:
+              command:
+              - "/bin/sh"
+              - "-c"
+              - "mkdir -p $OLLAMA_MODELS; touch $OLLAMA_MODELS/testfile; if [ ! -f\
+                \ /root/.ollama/initialized ]; then ollama run llama3.1:8b-instruct-q8_0\
+                \ && touch /root/.ollama/initialized; fi"
+        terminationMessagePath: "/dev/termination-log"
+        terminationMessagePolicy: "File"
+        imagePullPolicy: "Always"
+      restartPolicy: "Always"
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: "ClusterFirst"
+      securityContext: {}
+      schedulerName: "default-scheduler"
+  strategy:
+    type: "RollingUpdate"
+    rollingUpdate:
+      maxUnavailable: "25%"
+      maxSurge: "25%"
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
+status:
+  observedGeneration: 4
+  replicas: 1
+  updatedReplicas: 1
+  readyReplicas: 1
+  availableReplicas: 1
+  conditions:
+  - type: "Progressing"
+    status: "True"
+    lastUpdateTime: "2025-10-05T13:47:23Z"
+    lastTransitionTime: "2025-10-05T13:32:44Z"
+    reason: "NewReplicaSetAvailable"
+    message: "ReplicaSet \"ollama-9bc7fc7b6\" has successfully progressed."
+  - type: "Available"
+    status: "True"
+    lastUpdateTime: "2025-10-05T13:54:51Z"
+    lastTransitionTime: "2025-10-05T13:54:51Z"
+    reason: "MinimumReplicasAvailable"
+    message: "Deployment has minimum availability."
+  collisionCount: 1
