@@ -114,7 +114,7 @@ image:
   #   - myRegistrKeySecretName
 
 testFramework:
-  enabled: true
+  enabled: false
   ## The type of Helm hook used to run this test. Defaults to test.
   ## ref: https://helm.sh/docs/topics/charts_hooks/#the-available-hooks
   ##
@@ -661,7 +661,18 @@ plugins: []
 ## Configure grafana datasources
 ## ref: http://docs.grafana.org/administration/provisioning/#datasources
 ##
-datasources: {}
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+    - name: Prometheus
+      type: prometheus
+      url: http://prometheus-server.monitoring
+      editable: true
+      access: proxy
+      isDefault: true
+      jsonData:
+        timeInterval: 15s
 #  datasources.yaml:
 #    apiVersion: 1
 #    datasources:
@@ -797,8 +808,25 @@ notifiers: {}
 ##
 ## `path` must be /var/lib/grafana/dashboards/<provider_name>
 ##
-dashboardProviders: {}
-#  dashboardproviders.yaml:
+dashboardProviders:
+  dashboardproviders.yaml:
+    apiVersion: 1
+    providers:
+      - disableDeletion: false
+        folder: istio
+        name: istio
+        options:
+          path: /var/lib/grafana/dashboards/istio
+        orgId: 1
+        type: file
+      - disableDeletion: false
+        folder: istio
+        name: istio-services
+        options:
+          path: /var/lib/grafana/dashboards/istio-services
+        orgId: 1
+        type: file
+  #  dashboardproviders.yaml:
 #    apiVersion: 1
 #    providers:
 #    - name: 'default'
@@ -828,7 +856,23 @@ defaultCurlOptions: "-skf"
 ##
 ## dashboards per provider, use provider name as key.
 ##
-dashboards: {}
+dashboards:
+  istio:
+    istio-mesh-dashboard.json:
+      url: https://grafana.com/api/dashboards/7639/revisions/267/download
+    istio-service-dashboard.json:
+      url: https://grafana.com/api/dashboards/7636/revisions/267/download
+    istio-workload-dashboard.json:
+      url: https://grafana.com/api/dashboards/7630/revisions/267/download
+    istio-wasm-extension-dashboard.json:
+      url: https://grafana.com/api/dashboards/13277/revisions/224/download
+    istio-performance-dashboard.json:
+      url: https://grafana.com/api/dashboards/11829/revisions/267/download
+    istio-control-plane-dashboard.json:
+      url: https://grafana.com/api/dashboards/7645/revisions/267/download
+    istio-ztunnel-dashboard.json:
+      url: https://grafana.com/api/dashboards/21306/revisions/34/download
+
   # default:
   #   some-dashboard:
   #     json: |
