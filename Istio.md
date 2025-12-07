@@ -22,6 +22,29 @@ client version: 1.26.3
 ## Setup Istio
 
 
+```
+helm install istio-base istio/base --namespace istio-system --create-namespace --wait
+
+kubectl get crd gateways.gateway.networking.k8s.io &> /dev/null ||   kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.0/experimental-install.yaml
+
+helm install istiod istio/istiod --namespace istio-system --set profile=ambient --wait
+
+helm install istio-cni istio/cni --namespace istio-system --set profile=ambient --set global.platform=k3s --wait
+
+helm install ztunnel istio/ztunnel --namespace istio-system --wait
+
+```
+
+Then we can label the namespaces to use Istio
+```
+kubectl label namespace cert-manager istio-injection=enabled
+kubectl label namespace kiali-operator istio-injection=enabled
+kubectl label namespace longhorn-system istio-injection=enabled
+```
+
+
+
+
 https://istio.io/latest/docs/ambient/getting-started/
 
 ```

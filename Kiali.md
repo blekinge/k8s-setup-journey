@@ -36,7 +36,7 @@ spec:
     cluster_wide_access: true
   external_services:
     prometheus:
-      url: "http://prometheus-server.monitoring:80"
+      url: "http://prometheus-kube-prometheus-prometheus.monitoring:9090"
 ```
 
 ```
