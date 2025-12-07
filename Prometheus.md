@@ -10,23 +10,19 @@ To set up Prometheus, we use Helm. First, add the Helm repository:
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update
 ```
-Then, install Prometheus with the Longhorn storage class:
+Then, install Prometheus with the local config
 
-
-
-http://prometheus-grafana.monitoring.app.k8s.askov.net/login
 
 
 ```
 kubectl create namespace monitoring
-helm install prometheus prometheus-community/kube-prometheus-stack \
- --namespace monitoring \
- --set alertmanager.persistence.storageClass="longhorn" \
- --set server.persistentVolume.storageClass="longhorn"
+helm install prometheus prometheus-community/kube-prometheus-stack \ 
+ --namespace monitoring  \
+ -f values.yaml 
 ```
 
 ```
-aabl@gameon:~$ helm install prometheus prometheus-community/kube-prometheus-stack  --namespace monitoring     --set alertmanager.persistence.storageClass="longhorn"     --set server.persistentVolume.storageClass="longhorn"
+aabl@gameon:~$ helm install prometheus prometheus-community/kube-prometheus-stack  --namespace monitoring -f values.yaml 
 NAME: prometheus
 LAST DEPLOYED: Sun Dec  7 13:59:08 2025
 NAMESPACE: monitoring
@@ -53,3 +49,5 @@ Get your grafana admin user password by running:
 Visit https://github.com/prometheus-operator/kube-prometheus for instructions on how to create & configure Alertmanager and Prometheus instances using the Operator.
 aabl@gameon:~$ 
 ```
+
+Grafana is now available at http://prometheus-grafana.monitoring.app.k8s.askov.net/login
