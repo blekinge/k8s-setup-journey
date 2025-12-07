@@ -13,13 +13,13 @@ Episodes
   * [X] [DNS resolution for PFSense](DNS.md)
   * [X] [Istio](Istio.md)
   * [ ] [Cert Manager](CertManager.md)
+  * [ ] [KeyCloak](Keycloak.md)
   * [ ] [Traefik](Traefik.md)
 * [X] [Longhorn (storage)](Longhorn.md)
 * [ ] Monitoring
   * [X] [Kubernetes Dashboard](Dashboard.md)
   * [X] [Kiali](Kiali.md)
-  * [X] [Prometheus](Prometheus.md)
-  * [ ] [Grafana](Grafana.md)
+  * [X] [Prometheus/Grafana](Prometheus.md)
 
 
 # URLS

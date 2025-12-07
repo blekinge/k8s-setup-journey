@@ -11,62 +11,45 @@ helm repo add prometheus-community https://prometheus-community.github.io/helm-c
 helm repo update
 ```
 Then, install Prometheus with the Longhorn storage class:
+
+
+
+http://prometheus-grafana.monitoring.app.k8s.askov.net/login
+
+
 ```
 kubectl create namespace monitoring
-helm install prometheus prometheus-community/prometheus \
-    --namespace monitoring \
-    --set alertmanager.persistence.storageClass="longhorn" \
-    --set server.persistentVolume.storageClass="longhorn"
+helm install prometheus prometheus-community/kube-prometheus-stack \
+ --namespace monitoring \
+ --set alertmanager.persistence.storageClass="longhorn" \
+ --set server.persistentVolume.storageClass="longhorn"
 ```
 
 ```
-aabl@gameon:~/istio-1.26.3$ helm upgrade --install prometheus prometheus-community/prometheus \
-    --namespace monitoring \
-    --set alertmanager.persistence.storageClass="longhorn" \
-    --set server.persistentVolume.storageClass="longhorn"
-Release "prometheus" does not exist. Installing it now.
+aabl@gameon:~$ helm install prometheus prometheus-community/kube-prometheus-stack  --namespace monitoring     --set alertmanager.persistence.storageClass="longhorn"     --set server.persistentVolume.storageClass="longhorn"
 NAME: prometheus
-LAST DEPLOYED: Sun Aug  3 13:53:51 2025
+LAST DEPLOYED: Sun Dec  7 13:59:08 2025
 NAMESPACE: monitoring
 STATUS: deployed
 REVISION: 1
-TEST SUITE: None
 NOTES:
-The Prometheus server can be accessed via port 80 on the following DNS name from within your cluster:
-prometheus-server.monitoring.svc.cluster.local
+kube-prometheus-stack has been installed. Check its status by running:
+  kubectl --namespace monitoring get pods -l "release=prometheus"
+
+Get Grafana 'admin' user password by running:
+
+  kubectl --namespace monitoring get secrets prometheus-grafana -o jsonpath="{.data.admin-password}" | base64 -d ; echo
+
+Access Grafana local instance:
+
+  export POD_NAME=$(kubectl --namespace monitoring get pod -l "app.kubernetes.io/name=grafana,app.kubernetes.io/instance=prometheus" -oname)
+  kubectl --namespace monitoring port-forward $POD_NAME 3000
+
+Get your grafana admin user password by running:
+
+  kubectl get secret --namespace monitoring -l app.kubernetes.io/component=admin-secret -o jsonpath="{.items[0].data.admin-password}" | base64 --decode ; echo
 
 
-Get the Prometheus server URL by running these commands in the same shell:
-  export POD_NAME=$(kubectl get pods --namespace monitoring -l "app.kubernetes.io/name=prometheus,app.kubernetes.io/instance=prometheus" -o jsonpath="{.items[0].metadata.name}")
-  kubectl --namespace monitoring port-forward $POD_NAME 9090
-
-
-The Prometheus alertmanager can be accessed via port 9093 on the following DNS name from within your cluster:
-prometheus-alertmanager.monitoring.svc.cluster.local
-
-
-Get the Alertmanager URL by running these commands in the same shell:
-  export POD_NAME=$(kubectl get pods --namespace monitoring -l "app.kubernetes.io/name=alertmanager,app.kubernetes.io/instance=prometheus" -o jsonpath="{.items[0].metadata.name}")
-  kubectl --namespace monitoring port-forward $POD_NAME 9093
-#################################################################################
-######   WARNING: Pod Security Policy has been disabled by default since    #####
-######            it deprecated after k8s 1.25+. use                        #####
-######            (index .Values "prometheus-node-exporter" "rbac"          #####
-###### .          "pspEnabled") with (index .Values                         #####
-######            "prometheus-node-exporter" "rbac" "pspAnnotations")       #####
-######            in case you still need it.                                #####
-#################################################################################
-
-
-The Prometheus PushGateway can be accessed via port 9091 on the following DNS name from within your cluster:
-prometheus-prometheus-pushgateway.monitoring.svc.cluster.local
-
-
-Get the PushGateway URL by running these commands in the same shell:
-  export POD_NAME=$(kubectl get pods --namespace monitoring -l "app=prometheus-pushgateway,component=pushgateway" -o jsonpath="{.items[0].metadata.name}")
-  kubectl --namespace monitoring port-forward $POD_NAME 9091
-
-For more information on running Prometheus, visit:
-https://prometheus.io/
-aabl@gameon:~/istio-1.26.3$ 
+Visit https://github.com/prometheus-operator/kube-prometheus for instructions on how to create & configure Alertmanager and Prometheus instances using the Operator.
+aabl@gameon:~$ 
 ```
