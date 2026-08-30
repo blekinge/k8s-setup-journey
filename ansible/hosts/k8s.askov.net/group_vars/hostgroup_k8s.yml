@@ -1,9 +1,15 @@
-k3s_version: "v1.34.2+k3s1"
+k3s_version: "v1.35.1+k3s1"
 
 k3s_url: "https://{{ groups['hostgroup_masters'] | map('extract',hostvars, 'ansible_fqdn') | first }}:6443"
 
-longhorn_version: "v1.10.1"
+longhorn_version: "v1.10.2"
 
 k3s_environment:
   KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
+# format of string {{ ansible_managed }} available within Jinja2
+# templates indicates to users editing templates files will be replaced.
+# replacing {file}, {host} and {uid} and strftime codes with proper values.
+#ansible_managed = Ansible managed: {file} modified on %Y-%m-%d %H:%M:%S by {uid} on {host}
+# This short version is better used in templates as it won't flag the file as changed every run.
+ansible_managed: "Ansible managed: {file} on {host}"
