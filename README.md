@@ -36,15 +36,3 @@ kubectl get secret kubernetes-dashboard-serviceaccount-secret -n kubernetes-dash
 http://longhorn-ui.longhorn-system.app.k8s.askov.net
 
 
-```
-istioctl dashboard kiali
-istioctl dashboard grafana
-istioctl dashboard prometheus
-```
-
-
-
-# New plan
-
-I moved houses, so this is how I can redeploy the cluster here
-
