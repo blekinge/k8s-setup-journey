@@ -13,6 +13,12 @@
     cmd: "curl -sSfL -o /usr/local/bin/longhornctl https://github.com/longhorn/cli/releases/download/{{ longhorn_version }}/longhornctl-linux-amd64 
           && chmod a+x /usr/local/bin/longhornctl"
 
+- name: longhorn-system namespace
+  command:
+    cmd: "/usr/local/bin/kubectl create namespace longhorn-system"
+  environment: "{{ k3s_environment }}"
+  ignore_errors: true
+
 - name: longhornctl preflight
   command:
     cmd: "/usr/local/bin/longhornctl check preflight"
