@@ -9,9 +9,10 @@ Episodes
 * [X] [VM setup](VMs.md)
 * [X] [K3s](K3s.md)
 * [ ] Networking
-  * [X] [MetalLB and PFSense](MetalLB.md)
+  * [X] [Cilium](Cilium.md)
+  * [X] ~~[Istio](Istio.md)~~
+  * [X] ~~[MetalLB and PFSense](MetalLB.md)~~
   * [X] [DNS resolution for PFSense](DNS.md)
-  * [X] [Istio](Istio.md)
   * [ ] [Cert Manager](CertManager.md)
   * [ ] [KeyCloak](Keycloak.md)
   * [ ] [Traefik](Traefik.md)

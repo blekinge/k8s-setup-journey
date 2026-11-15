@@ -1,0 +1,22 @@
+apiVersion: cilium.io/v2
+kind: CiliumBGPClusterConfig
+metadata:
+  name: cilium-bgp
+spec:
+#  https://docs.cilium.io/en/stable/network/bgp-control-plane/bgp-control-plane-configuration/#bgp-cluster-configuration
+  nodeSelector:
+    matchLabels:
+      #All nodes. Perhaps find some other way to do it later.
+      "node.kubernetes.io/instance-type": "k3s"
+  bgpInstances:
+  - name: "instance-64500"
+    localASN: 64500
+    localPort: 179
+    peers:
+    - name: "cilium-bgppeer-pfsense"
+      peerASN: 64501
+      peerAddress: 192.168.4.1 # PFSense address
+      #This links to BGPPeer. BGPPeer links to BGPAdvertisment
+      peerConfigRef:
+        name: "cilium-bgppeer-pfsense"
+

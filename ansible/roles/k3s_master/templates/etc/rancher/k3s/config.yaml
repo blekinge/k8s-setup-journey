@@ -1,4 +1,10 @@
 write-kubeconfig-group: "wheel"
 write-kubeconfig-mode: "0640"
-disable:
-  - servicelb
+write-kubeconfig-name: "k8s.askov.net"
+cluster-domain: k8s.askov.net
+
+flannel-backend: none
+disable-network-policy: true
+disable: #valid values: coredns, servicelb, traefik, local-storage, metrics-server, runtimes, gateway-api-crd
+  - servicelb #metalb takes over
+  - local-storage #longhorn takes over

@@ -1,0 +1,20 @@
+apiVersion: cilium.io/v2
+kind: CiliumBGPAdvertisement
+metadata:
+  name: bgp-advertisement
+  labels:
+    advertise: bgp
+spec:
+#  https://docs.cilium.io/en/stable/network/bgp-control-plane/bgp-control-plane-configuration/#bgp-advertisements
+  advertisements:
+    - advertisementType: "Service"
+      service:
+        addresses: # <-- specify the service types to advertise
+          - LoadBalancerIP
+      selector: # <-- select Services to advertise
+        matchExpressions:
+          - { key: bgp, operator: NotIn, values: [ blue ] } # Select all
+      attributes:
+        communities:
+          wellKnown: [ "no-advertise", ]
+        localPreference: 100 # Weight of the routes we advertise
