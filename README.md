@@ -40,3 +40,10 @@ istioctl dashboard kiali
 istioctl dashboard grafana
 istioctl dashboard prometheus
 ```
+
+
+
+# New plan
+
+I moved houses, so this is how I can redeploy the cluster here
+
