@@ -1,6 +1,14 @@
+Cert-Manager
+======================
+
 https://cert-manager.io/
 
 cert-manager is a powerful and extensible X.509 certificate controller for Kubernetes and OpenShift workloads. It will obtain certificates from a variety of Issuers, both popular public Issuers as well as private Issuers, and ensure the certificates are valid and up-to-date, and will attempt to renew certificates at a configured time before expiry.
+
+My DNS-provider of choice is [Simply.com](simply.com). This is probably a bad choice, but it is my choice so that is what we use.
+
+Now, the cluster is not publically accessible, so to get Certificates from Lets-Encrypt, we need to use DNS01 challenges. This means that we need to set up Cert-manager to use Simply-dns
+
 
 https://cert-manager.io/docs/installation/helm/
 ```bash

@@ -11,7 +11,7 @@ Episodes
 * [ ] Networking
   * [X] [Cilium](Cilium.md)
   * [X] ~~[Istio](Istio.md)~~
-  * [X] ~~[MetalLB and PFSense](MetalLB.md)~~
+  * [X] ~~[MetalLB and PFSense](MetalLB.md)~~ Using Cilium BGP instead
   * [X] [DNS resolution for PFSense](DNS.md)
   * [ ] [Cert Manager](CertManager.md)
   * [ ] [KeyCloak](Keycloak.md)

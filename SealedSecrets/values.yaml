@@ -1,0 +1,2 @@
+watchForSecrets: true
+fullnameOverride: sealed-secrets-controller
